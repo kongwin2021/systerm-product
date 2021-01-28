@@ -1,0 +1,16 @@
+ /* 登录页表单输入框样式 */
+ .login-page .container .el-input__inner{
+    width: 83% !important;
+    background: none !important;
+    color: #fff !important;
+  }
+  .login-page .container .el-button{
+      width: 83% !important;
+      background: linear-gradient(90deg,#1596fb,#002dff);
+      margin-bottom: 120px;
+      
+      
+  }
+  .login-page .container .el-form-item__label{
+    color: #fff !important;
+  }
