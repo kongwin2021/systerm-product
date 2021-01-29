@@ -29,7 +29,7 @@
 
 //  2、 登入通过后将后端返回的token存到本地；
 
-//  3、 每次请求的时候携带token；
+//  3、 每次请求的时候,携带token到请求头；authorization
 
 //  4、 展示token校验正确的数据；
 
@@ -38,6 +38,7 @@
 
 
 import {login} from "@/api"
+import {mapMutations} from "vuex"
   export default {
     data() {
       /**
@@ -77,23 +78,42 @@ import {login} from "@/api"
       };
     },
     methods: {
+      ...mapMutations(['SET_USERINFO']),
       submitForm(formName) {
-        console.log(this.$refs[formName])
+        
+        //console.log(this.$refs[formName])
         this.$refs[formName].validate((valid) => {
           if (valid) {  //  代表本地校验通过
+            //  打开加载登入动画
+
+            const loading = this.$loading({
+              lock: true,
+              text: '正在登入',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            })
+
             let { username,password } = this.loginForm;
             //  发送登入请求
             login(username,password)
             .then(res =>{
+              //  服务器响应关闭加载动画
+              loading.close()
+
               console.log(res);
               if(res.data.state) {
+
+                this.$message.success('登入成功')
                 //  用户名密码正确
                 localStorage.setItem("qf2008-token",res.data.token)
+                localStorage.setItem("qf-userInfo",JSON.stringify(res.data.userInfo))
+                //  更改state中['userInfo'] 的值；
+                this.SET_USERINFO(res.data.userInfo)
                 //  跳转到主页
                 this.$router.push("/")
               } else {
                 //  用户名密码错误
-                alert("用户名密码错误")
+                this.$message.error("用户名密码错误")
               }
             })
             .catch(err =>{

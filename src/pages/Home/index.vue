@@ -1,12 +1,8 @@
 <template>
   <div class="home-page">
     <el-container>
-      <el-aside width="200px">
-        <!-- 侧边栏 -->
-        <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
-          <el-radio-button :label="false">展开</el-radio-button>
-          <el-radio-button :label="true">收起</el-radio-button>
-        </el-radio-group>
+      <el-aside width="200">
+
         <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
           <el-submenu index="1">
             <template slot="title">
@@ -40,14 +36,32 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <!-- 顶部 -->
+      
       <el-container>
+        <!-- 顶部 -->
         <el-header>
 
           <el-row type="flex" class="row-bg" justify="space-between">
-            <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-            <el-col :span="6"><div class="grid-content bg-purple-light"></div></el-col>
-            <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+            <el-col :span="6">
+              <div class="grid-content">
+                图标
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content">
+                七武海管理系统
+              </div></el-col>
+            <el-col :span="6">
+              <div class="grid-content">
+                <el-avatar  
+                            fit="fit"
+                            >
+                </el-avatar>
+                <span>欢迎您：</span>  
+                <b class="nickname">{{userInfo.nickname}}</b>
+                <span class="quit" @click="quit">退出</span>
+              </div>
+            </el-col>
           </el-row>
 
         </el-header>
@@ -59,13 +73,33 @@
 </template>
 
 <script>
+  import { getLoginLog } from "@/api"
+  import {mapState} from "vuex"
   export default {
+    computed:{
+      ...mapState(['userInfo'])
+    },
     data() {
       return {
         isCollapse: true
       };
     },
+    mounted() {
+      getLoginLog()
+        .then(res =>{
+          console.log(res);
+        })
+    },
     methods: {
+      quit() {
+        //  退出登入
+        //  1、清除token和userInfo
+        //  2、跳转登录页
+        localStorage.removeItem('qf-userInfo')
+        localStorage.removeItem('qf-token')
+
+        this.$router.push("/login")
+      },
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
@@ -84,6 +118,25 @@
       margin-bottom: 0;
     }
   } */
+  .row-bg{
+    /* background: linear-gradient(135deg, #4c67ff, #5635df); */
+    color: #fff;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 60px;
+  }
+ 
+  .el-header{
+    background: linear-gradient(135deg, #4c67ff, #5635df);
+  }
+  .quit{
+    cursor: pointer;
+    
+  }
+  .el-avatar--circle{
+    vertical-align: middle;
+  }
   .el-col {
     border-radius: 4px;
   }
@@ -96,14 +149,14 @@
   .bg-purple-light {
     background: #e5e9f2;
   }
-  .grid-content {
+  /* .grid-content {
     border-radius: 4px;
     min-height: 36px;
-  }
-  .row-bg {
+  } */
+  /* .row-bg {
     padding: 10px 0;
     background-color: #f9fafc;
-  }
+  } */
   /* 侧边栏样式 */
    .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
@@ -141,6 +194,12 @@
   
   .el-container:nth-child(7) .el-aside {
     line-height: 320px;
+  }
+
+
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
   }
 </style>
 
